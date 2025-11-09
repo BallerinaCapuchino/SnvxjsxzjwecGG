@@ -418,7 +418,7 @@
       showAuth();
     }
     
-    // Auto-login with Telegram user
+    // Try Telegram auto-login (without auto-registration)
     function tryTelegramAutoLogin() {
       if (!tgUser) return false;
       
@@ -427,20 +427,9 @@
       let users = getUsers();
       let u = users.find(x => x.username.toLowerCase() === username.toLowerCase());
       
+      // Don't auto-register, just check if user exists
       if (!u) {
-        // Auto-register Telegram user
-        const isAdmin = username === 'Max';
-        u = {
-          username: username,
-          password: String(tgUser.id),
-          isAdmin: isAdmin,
-          deleted: false,
-          telegramId: tgUser.id
-        };
-        users.push(u);
-        setUsers(users);
-        ensureRecord(username);
-        toast('Аккаунт создан через Telegram', 'ok');
+        return false;
       }
       
       const sessionObj = { ...u, realName: realName };

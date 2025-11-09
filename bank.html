@@ -397,14 +397,15 @@
     if(!u || u.deleted) throw new Error('Пользователь не найден');
     const amt = Math.max(0, Math.floor(+amount));
     if(!amt) throw new Error('Сумма должна быть > 0');
-    u.balance += amt; setUsers(users);
+    u.balance += amt;
+    setUsers(users); // Auto-save
     const h = getHistory();
     h.unshift({ id: crypto.randomUUID(), time: nowISO(), from:'АДМИН', to:u.username, amount: amt, comment: comment||'', type:'admin_credit' });
-    setHistory(h);
+    setHistory(h); // Auto-save
     const notes = getNotes();
     notes[u.username] = notes[u.username] || [];
     notes[u.username].push({ id: crypto.randomUUID(), createdAt: nowISO(), text: `Вам начислено ${fmt(amt)} ${CURRENCY} от администратора. Комментарий: ${comment||'—'}` , read:false });
-    setNotes(notes);
+    setNotes(notes); // Auto-save
   }
 
   function transfer(fromName, toName, amount, comment){
@@ -416,10 +417,11 @@
     const amt = Math.max(0, Math.floor(+amount));
     if(!amt) throw new Error('Сумма должна быть > 0');
     if(from.balance < amt) throw new Error('Недостаточно средств');
-    from.balance -= amt; to.balance += amt; setUsers(users);
+    from.balance -= amt; to.balance += amt;
+    setUsers(users); // Auto-save
     const h = getHistory();
     h.unshift({ id: crypto.randomUUID(), time: nowISO(), from: from.username, to: to.username, amount: amt, comment: comment||'', type:'transfer' });
-    setHistory(h);
+    setHistory(h); // Auto-save
   }
 
   function removeAccount(name){
@@ -702,31 +704,16 @@
     setUsers(users);
   }
   
-  // Auto-login with Telegram user
+  // Try Telegram auto-login (without auto-registration)
   function tryTelegramAutoLogin() {
     if (!tgUser) return false;
     
     const username = tgUser.username || `tg_${tgUser.id}`;
     let u = findUser(username);
     
+    // Don't auto-register, just check if user exists
     if (!u) {
-      // Auto-register Telegram user
-      const users = getUsers();
-      const isFirstUser = users.length === 0 || users.every(usr => usr.deleted);
-      u = {
-        username: username,
-        password: String(tgUser.id), // Use Telegram ID as password
-        isAdmin: isFirstUser && username === 'Max',
-        balance: isFirstUser ? 0 : 100,
-        online: true,
-        deleted: false,
-        telegramId: tgUser.id,
-        firstName: tgUser.first_name,
-        lastName: tgUser.last_name
-      };
-      users.push(u);
-      setUsers(users);
-      toast('Аккаунт создан автоматически через Telegram', 'ok');
+      return false;
     }
     
     markOnline(u.username, true);

@@ -583,7 +583,7 @@
       ensureRoleSelected();
     }
     
-    // Auto-login with Telegram user
+    // Try Telegram auto-login (without auto-registration)
     function tryTelegramAutoLogin() {
       if (!tgUser) return false;
       
@@ -591,23 +591,9 @@
       let list = users();
       let u = list.find(x => x.username.toLowerCase() === username.toLowerCase());
       
+      // Don't auto-register, just check if user exists
       if (!u) {
-        // Auto-register Telegram user
-        const isAdmin = username === 'Max';
-        u = {
-          username: username,
-          password: String(tgUser.id),
-          isAdmin: isAdmin,
-          deleted: false,
-          roleKey: isAdmin ? 'admin' : null,
-          rate: 0,
-          telegramId: tgUser.id,
-          firstName: tgUser.first_name,
-          lastName: tgUser.last_name
-        };
-        list.push(u);
-        setUsers(list);
-        toast('Аккаунт создан через Telegram', 'ok');
+        return false;
       }
       
       setSession({
