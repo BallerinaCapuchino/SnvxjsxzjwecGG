@@ -1,0 +1,110 @@
+# Команды для деплоя HomeOS на GitHub и Render
+
+# ============================================
+# ШАГ 1: Обновить и загрузить на GitHub
+# ============================================
+
+# 1.1 Обновить локальную копию (если нужно)
+git pull origin main --rebase
+
+# 1.2 Добавить все файлы
+git add .
+
+# 1.3 Сделать коммит
+git commit -m "HomeOS Multi-User System v2"
+
+# 1.4 Загрузить на GitHub
+git push origin main
+
+# Если возникает ошибка "rejected", выполните:
+git pull origin main --rebase
+git push origin main
+
+# ============================================
+# ШАГ 2: Проверить что файлы загружены
+# ============================================
+
+# Откройте в браузере:
+# https://github.com/BallerinaCapuchino/SnvxjsxzjwecGG
+
+# Должны быть видны:
+# - server_simple.py
+# - api_client.js
+# - requirements_v2.txt
+# - index.html
+# - и другие файлы
+
+# ============================================
+# ШАГ 3: Деплой на Render.com
+# ============================================
+
+# 1. Откройте https://render.com
+# 2. Sign Up → Continue with GitHub
+# 3. New + → Web Service
+# 4. Connect Repository: BallerinaCapuchino/SnvxjsxzjwecGG
+# 
+# 5. Настройки:
+#    Name: homeos-server
+#    Runtime: Python 3
+#    Build Command: pip install -r requirements_v2.txt
+#    Start Command: python server_simple.py
+#
+# 6. Environment Variables:
+#    BOT_TOKEN = 8433512093:AAGHq0zSEmm2FD7TqZllS3Vt2EGOb4KR7Ow
+#    SECRET_KEY = e9a3c8f8d2b1a0c7e5d3f2a1b0c9d8e7
+#
+# 7. Create Web Service
+#
+# 8. Дождитесь завершения деплоя (3-5 минут)
+#
+# 9. Скопируйте URL (например: https://homeos-server.onrender.com)
+
+# ============================================
+# ШАГ 4: Включить GitHub Pages
+# ============================================
+
+# 1. https://github.com/BallerinaCapuchino/SnvxjsxzjwecGG
+# 2. Settings → Pages
+# 3. Source: Deploy from a branch
+# 4. Branch: main, folder: / (root)
+# 5. Save
+# 6. Подождите 1-2 минуты
+# 7. Ваш URL: https://ballerinaCapuchino.github.io/SnvxjsxzjwecGG/
+
+# ============================================
+# ШАГ 5: Обновить API URL
+# ============================================
+
+# В файле api_client.js строка 10:
+# Было:
+#   constructor(baseURL = 'http://localhost:5000') {
+#
+# Стало (замените на ваш Render URL):
+#   constructor(baseURL = 'https://homeos-server.onrender.com') {
+#
+# Затем:
+git add api_client.js
+git commit -m "Update API URL for production"
+git push
+
+# ============================================
+# ШАГ 6: Настроить Telegram бота
+# ============================================
+
+# В Telegram откройте @BotFather и отправьте:
+# /setmenubutton
+#
+# Выберите вашего бота
+# Button text: 🏠 Открыть HomeOS
+# URL: https://ballerinaCapuchino.github.io/SnvxjsxzjwecGG/index.html
+
+# ============================================
+# ГОТОВО! 🎉
+# ============================================
+
+# Теперь любой может:
+# 1. Открыть вашего Telegram бота
+# 2. Нажать кнопку "Открыть HomeOS"
+# 3. Пользоваться системой!
+
+# Данные синхронизируются между всеми пользователями через сервер на Render!
